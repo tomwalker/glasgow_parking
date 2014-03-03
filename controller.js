@@ -1,46 +1,33 @@
-var app = app || angular.module('parking', ['parking.services', 'ngCookies']);
+var app = app || angular.module('parking', ['parking.services',
+                                            'ngCookies', 'leaflet-directive']);
 
-// app.config(['$httpProvider', function($httpProvider) {
-// 	$httpProvider.defaults.useXDomain = true;
-// 	delete $httpProvider.defaults.headers.common["X-Requested-With"];
-// }]);
+app.config(['$httpProvider', function($httpProvider) {
 
-app.controller('parkingController', ['$scope', '$http', 'feed',
-        function ($scope, $http, feed) {
-			// $httpProvider.defaults.useXDomain = true;
-			delete $http.defaults.headers.common["X-Requested-With"];				
-            
-            $scope.fetch = function() {
-				console.log('clicked');
-                feed.jsonpquery(function (data) {
-					console.log(data);
-                    $scope.carfeed = angular.fromJson(data, [true]);
-                    console.log('hi');
-                });
-            };
-            // $scope.a = $scope.dataRetrieve();
-	    
-            $scope.cheese = 'woof';
-
-            // $scope.data = "unknown";
-
-            // $http.jsonp('http://dashboard.glasgow.gov.uk/api/live/parking.php?callback=JSON_CALLBACK')
-            //     .then(function(data){
-            //         $scope.carfeed = data;
-	    	// 		console.log(data);
-            //     });
-				// .error(function(data){
-				// 	console.log('error detected');
-				// 	console.log(data);
-				// 	$scope.carfeed = 'chicken and chips';
-				// });
-			
-	    
-
-        
+    $httpProvider.defaults.useXDomain = true;
+    delete $httpProvider.defaults.headers.common['X-Requested-With'];
+    
 }]);
 
+app.controller('parkingController',
+               ['$scope', 'feed', function ($scope, feed) {
+                    
+    $scope.dataRetrieve = function() {
+        feed.get(function (data) {
+            console.log(data);
+            $scope.carfeed = data['payloadPublication']['situation'];
+            console.log('hi');
+        });
+    };
 
+    $scope.a = $scope.dataRetrieve();
 
+    $scope.glasgowCenter = {
+        lat: 55.8588,
+        lng: -4.2479,
+        zoom: 13
+    };
 
+	$scope.data = "ping";
+
+}]);
 
