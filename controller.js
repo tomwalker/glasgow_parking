@@ -1,4 +1,5 @@
-var app = app || angular.module('parking', ['parking.services', 'ngCookies']);
+var app = app || angular.module('parking', ['parking.services',
+					    'ngCookies', 'leaflet-directive']);
 
 app.config(['$httpProvider', function($httpProvider) {
 
@@ -18,27 +19,22 @@ app.controller('parkingController',
 			feed.get(function (data) {
 	    		    console.log(data);
 			    // $scope.carfeed = angular.fromJson(data, [true]);
-	    		    $scope.carfeed = data;
+	    		    $scope.carfeed = data['payloadPublication']['situation'];
 			    console.log('hi');
 			});
 		    };
 		    $scope.a = $scope.dataRetrieve();
+
+		    $scope.glasgowCenter = {
+			lat: 55.8588,
+			lng: -4.2479,
+			zoom: 13
+		    };
 		    
 		    // $scope.cheese = 'woof';
 
 		    $scope.data = "ping";
 
-		    // $http({method:'GET',
-		    // 	   url: 'http://dashboard.glasgow.gov.uk/api/live/parking.php?type=json',
-		    // 	   headers: {}})
-		    //     .success(function(data, status, headers, config){
-		    // 	    $scope.feedout = data;
-		    // 	    // console.log(data);
-		    //     })
-		    // 	.error(function(data, status, headers, config) {
-		    // 	    // called asynchronously if an error occurs
-		    // 	    // or server returns response with an error status.
-		    // 	    $scope.feedout = 'moo';
-		    // 	});
+
 		    
 		}]);

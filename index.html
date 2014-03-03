@@ -3,48 +3,59 @@
 <html lang="en">
   <head>
 
-	<title>Beep</title>
+    <title>Beep</title>
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge"> <!-- for ie compatibility -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"> <!-- for ie compatibility -->
 
     <!-- Bootstrap -->
-	<!-- Latest compiled and minified CSS -->
-	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.css">
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.css">
 
-	<!-- Optional theme -->
-	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap-theme.min.css">
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap-theme.min.css">
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
-      <script src="//netdna.bootstrapcdn.com/html5shiv/3.6.1/html5shiv.js"></script>
-      <link href="http://netdna.bootstrapcdn.com/respond-proxy.html" id="respond-proxy" rel="respond-proxy" />
-    <![endif]-->
+	<script src="//netdna.bootstrapcdn.com/html5shiv/3.6.1/html5shiv.js"></script>
+	<link href="http://netdna.bootstrapcdn.com/respond-proxy.html" id="respond-proxy" rel="respond-proxy" />
+	<![endif]-->
 
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.css" />
+    <link rel="stylesheet" href="./misc.css" />
 
+    <script src="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.js"></script>
+
+    <script src="//code.jquery.com/jquery.js"></script>
 
   </head>
   <body ng-app='parking'>
-	
-
-	<div ng-controller='parkingController' >
-	  {{ carfeed }}
-	  {{ data }}
-	</div>
-
-	<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.13/angular.js"></script>
-	<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.13/angular-resource.js"></script>	
-    <script src="http://code.angularjs.org/1.0.0rc10/angular-cookies-1.0.0rc10.js"></script>	
-	<script src="./services.js"></script>
-	<script src="./controller.js"></script>	
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <!-- <script src="//code.jquery.com/jquery.js"></script> -->
-	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     
-	<!-- Bootstrap from CDN  -->
-    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.2/js/bootstrap.min.js"></script>
 
-	<!--  -->
+    <div ng-controller='parkingController'>
+      <li class="animate-repeat" ng-repeat="loc in carfeed">
+	{{ loc.situationRecord.carParkIdentity }}
+      </li>
+      {{ data }}
+
+      <leaflet width="100%" height="480px" center="glasgowCenter" markers="markers">
+      </leaflet>
+      
+    </div> <!-- end parking controller -->
+
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.13/angular.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.13/angular-resource.js"></script>	
+    <script src="http://code.angularjs.org/1.0.0rc10/angular-cookies-1.0.0rc10.js"></script>	
+    <script src="./services.js"></script>
+    <script src="./controller.js"></script>
+
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    
+    <!-- Bootstrap from CDN  -->
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.2/js/bootstrap.min.js"></script>
+    <script src="./angular-leaflet-directive.min.js"></script>
+
 
 
 
