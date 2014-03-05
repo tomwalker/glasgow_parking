@@ -47,4 +47,6 @@ app.get('/api', function (req, res) {
     res.send(body);
 });
 
-app.listen(4242);
+var port = Number(process.env.PORT || 4242);
+
+app.listen(port);

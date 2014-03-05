@@ -1,0 +1,28 @@
+{
+  "name": "glasgow_parking",
+  "version": "0.0.1",
+  "description": "maps glasgow city council parking spaces on a map",
+  "main": "node_server.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tomwalker/glasgow_parking.git"
+  },
+  "keywords": [
+    "glasgow"
+  ],
+  "author": "Tom Walker",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tomwalker/glasgow_parking/issues"
+  },
+  "homepage": "https://github.com/tomwalker/glasgow_parking",
+  "dependencies": {
+    "express": "^4.0.0-rc2"
+  }
+}

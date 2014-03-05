@@ -7,10 +7,3 @@ services.factory('feed', ['$resource',
         return $resource('http://localhost:4242/api');
     }
 ]);
-
-
-
-
-
-
-
