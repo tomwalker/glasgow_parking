@@ -1,8 +1,5 @@
 'use strict';
 
-/* Services */
-
-
 var services = angular.module('parking.services', ['ngResource']);
 
 services.factory('feed', ['$resource',

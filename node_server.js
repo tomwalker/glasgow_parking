@@ -11,26 +11,29 @@ var options = {
     path: '/api/live/parking.php?type=json'
 };
 
-http.get(options, function(res) {
-    // console.log("Got response: " + res.statusCode);
-
-    // for (x in res)
-    // {
-    // 	console.log(x + ": " + res[x]);
-    // };
-
-
+function pull() {
+    http.get(options, function(res) {
+    // console.log('started pull');
+    var previous = body;
+    body = '';
+    
     res.on('data', function(chunk) {
-	body += chunk;
+	if (chunk != '{"error":"RATE_LIMIT"}'){
+	    body += chunk;
+	} else {
+	    body = previous;
+	    // console.log('using cache');
+	}
     });
     
     res.on("end", function() {
-	console.log("BODY: " + body);
+	// console.log("BODY: " + body);
     });
     
 }).on('error', function(e) {
     console.log("Got error: " + e.message);
 });
+}
 
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
@@ -40,8 +43,8 @@ app.use(function(req, res, next) {
 
 
 app.get('/api', function (req, res) {
-  res.send(body);
+    pull();
+    res.send(body);
 });
 
 app.listen(4242);
-

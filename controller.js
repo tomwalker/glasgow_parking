@@ -1,23 +1,22 @@
-var app = app || angular.module('parking', ['parking.services',
-                                            'ngCookies', 'leaflet-directive']);
+var app = app || angular.module('parking', ['parking.services', 'leaflet-directive']);
 
-app.config(['$httpProvider', function($httpProvider) {
+// app.config(['$httpProvider', function($httpProvider) {
 
-    $httpProvider.defaults.useXDomain = true;
-    delete $httpProvider.defaults.headers.common['X-Requested-With'];
+//     $httpProvider.defaults.useXDomain = true;
+//     delete $httpProvider.defaults.headers.common['X-Requested-With'];
     
-}]);
+// }]);
 
 app.controller('parkingController',
                ['$scope', 'feed', function ($scope, feed) {
 
     function mapDistance(current, meter) {
-		// taken from http://www.movable-type.co.uk/scripts/latlong.html
-		
-		Number.prototype.toRad = function() {
-			return this * Math.PI / 180;
-		};
-		
+        // taken from http://www.movable-type.co.uk/scripts/latlong.html
+                
+        Number.prototype.toRad = function() {
+            return this * Math.PI / 180;
+        };
+                
         var R = 6371;
         var dLat = (current.lat - meter.lat).toRad();
         var dLon = (current.lng - meter.lng).toRad();
@@ -36,7 +35,7 @@ app.controller('parkingController',
     $scope.dataRetrieve = function() {
 
         feed.get(function (data) {
-            console.log('before');
+
             var carfeed = data['payloadPublication']['situation'];
 
             for (var meter in carfeed) {
@@ -54,26 +53,54 @@ app.controller('parkingController',
                     .groupOfLocations.locationContainedInGroup
                     .pointByCoordinates.pointCoordinates.longitude;
 
-                var distance = mapDistance($scope.current_location, {lat: latitude, lng: longitude});
-                console.log(distance);
 
                 if (carfeed[meter].situationRecord.carParkStatus === "carParkFull"){
-                    var parkingMessage = 'Car park full';
+                    var parkingMessage = '<strong>' + name + '</strong><br>Car park full';
+		    
+		    var full_icon = {
+			iconUrl: './error.png',
+			iconSize:     [32, 32],
+			iconAnchor:   [16, 16],
+			popupAnchor:  [0, -12]
+		    };
+		    
+                    $scope.meters[name] = {
+			lat: latitude,
+			lng: longitude,
+			message: parkingMessage,
+			focus: false,
+			icon: full_icon,
+			draggable: false
+                    };
+		
                 } else {
-                    var parkingMessage = 'Free spaces: ' +
+		    
+                    var parkingMessage = '<strong>' + name +
+			'</strong><br>Free spaces: ' +
                         (carfeed[meter].situationRecord.totalCapacity -
-                         carfeed[meter].situationRecord.occupiedSpaces) +
-						'<br> Distance: ' + distance + 'km';
+                         carfeed[meter].situationRecord.occupiedSpaces);
+
+		    if ($scope.current_location != false){
+			var distance = mapDistance($scope.current_location,
+						   {lat: latitude, lng: longitude});
+			if (distance < 1){
+			    parkingMessage = parkingMessage.concat('<br> Distance: '
+							       + distance * 1000 + 'm');
+			} else {
+			    parkingMessage = parkingMessage.concat('<br> Distance: '
+							       + distance + 'km');
+			}
+		    }
+
+		    $scope.meters[name] = {
+			lat: latitude,
+			lng: longitude,
+			message: parkingMessage,
+			focus: false,
+			draggable: false
+                    };
                 }
 
-                
-                $scope.meters[name] = {
-                    lat: latitude,
-                    lng: longitude,
-                    message: parkingMessage,
-                    focus: false,
-                    draggable: false
-                };
             }
             
         });                     // end of feed.get
@@ -85,10 +112,9 @@ app.controller('parkingController',
     $scope.glasgowCenter = {
         lat: 55.8588,
         lng: -4.2479,
-        zoom: 15
+        zoom: 14
     };
 
-    $scope.data = "ping";
 
     if (!navigator.geolocation){
         $scope.current_location = false;
@@ -109,8 +135,8 @@ app.controller('parkingController',
         $scope.meters['current'] = {
             lat: latitude,
             lng: longitude,
-            message: 'you are here',
-            focus: false,
+            message: 'You are here',
+            focus: true,
             icon: car_icon,
             draggable: false
         };
@@ -120,19 +146,17 @@ app.controller('parkingController',
             lng: longitude
         };
 
-		$scope.a = $scope.dataRetrieve();
-
+	$scope.dataRetrieve();
 
     }
 
     function error() {
         $scope.current_location = false;
+	$scope.dataRetrieve();
     }
 
 
     navigator.geolocation.getCurrentPosition(success, error);
 
+
 }]);
-
-
-
