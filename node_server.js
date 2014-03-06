@@ -47,6 +47,11 @@ app.get('/api', function (req, res) {
     res.send(body);
 });
 
+server.get('/', function(req, res) {
+    res.render('index.html');
+}
+
+
 var port = Number(process.env.PORT || 4242);
 
 app.listen(port);
