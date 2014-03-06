@@ -48,8 +48,8 @@ app.get('/api', function (req, res) {
 });
 
 server.get('/', function(req, res) {
-    res.render('index.html');
-}
+    res.render('./index.html');
+};
 
 
 var port = Number(process.env.PORT || 4242);
