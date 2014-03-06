@@ -41,14 +41,15 @@ app.use(function(req, res, next) {
   next();
 });
 
+app.use(express.static(__dirname + '/static'));
 
 app.get('/api', function (req, res) {
     pull();
     res.send(body);
 });
 
-app.get('/', function(req, res) {
-    res.render('index.html');
+app.get('/', function(req, res){
+  res.sendfile(__dirname + '/index.html');
 });
 
 
