@@ -38,12 +38,16 @@ app.controller('parkingController',
 
             var carfeed = data['payloadPublication']['situation'];
 
+			var x = 0;
+
             for (var meter in carfeed) {
                 var name = carfeed[meter]
                     .situationRecord
                     .carParkIdentity
                     .substring(0,
                      carfeed[meter].situationRecord.carParkIdentity.indexOf(':'));
+
+				name = name.split(' ').join('-');
 
                 var latitude = carfeed[meter].situationRecord
                     .groupOfLocations.locationContainedInGroup
@@ -57,53 +61,53 @@ app.controller('parkingController',
                 if (carfeed[meter].situationRecord.carParkStatus === "carParkFull"){
                     var parkingMessage = '<strong>' + name + '</strong><br>Car park full';
             
-					var full_icon = {
-						iconUrl: './error.png',
-						iconSize:     [32, 32],
-						iconAnchor:   [16, 16],
-						popupAnchor:  [0, -12]
-					};
-					
+                    var full_icon = {
+                        iconUrl: './error.png',
+                        iconSize:     [32, 32],
+                        iconAnchor:   [16, 16],
+                        popupAnchor:  [0, -12]
+                    };
+                    
                     $scope.meters[name] = {
-						lat: latitude,
-						lng: longitude,
-						message: parkingMessage,
-						focus: false,
-						icon: full_icon,
-						draggable: false
+                        lat: latitude,
+                        lng: longitude,
+                        message: parkingMessage,
+                        focus: false,
+                        icon: full_icon,
+                        draggable: false
                     };
         
                 } else {
             
                     var parkingMessage = '<strong>' + name +
-						'</strong><br>Free spaces: ' +
+                        '</strong><br>Free spaces- ' +
                         (carfeed[meter].situationRecord.totalCapacity -
                          carfeed[meter].situationRecord.occupiedSpaces);
 
-					if ($scope.current_location !== false){
-						var distance = mapDistance($scope.current_location,
-												   {lat: latitude, lng: longitude});
-						if (distance < 1){
-							parkingMessage = parkingMessage.concat('<br> Distance: '
-																   + distance * 1000 + 'm');
-						} else {
-							parkingMessage = parkingMessage.concat('<br> Distance: '
-																   + distance + 'km');
-						}
-					}
+                    if ($scope.current_location !== false){
+                        var distance = mapDistance($scope.current_location,
+                                                   {lat: latitude, lng: longitude});
+                        if (distance < 1){
+                            parkingMessage = parkingMessage.concat('<br> Distance ' +
+                                                                   distance * 1000 + 'm');
+                        } else {
+                            parkingMessage = parkingMessage.concat('<br> Distance ' +
+                                                                   distance + 'km');
+                        }
+                    }
 
-					$scope.meters[name] = {
-						lat: latitude,
-						lng: longitude,
-						message: parkingMessage,
-						focus: false,
-						draggable: false
+                    $scope.meters[name] = {
+                        lat: latitude,
+                        lng: longitude,
+                        message: parkingMessage,
+                        focus: false,
+                        draggable: false
                     };
                 }
 
-            }
 
-			$scope.$apply();
+            }
+			console.log($scope.meters);
             
         });                     // end of feed.get
 
