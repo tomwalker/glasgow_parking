@@ -2330,8 +2330,7 @@
               }
               // Update the lat-lng property (always present in marker properties)
               if (!(isNumber(markerData.lat) && isNumber(markerData.lng))) {
-				  console.log(marker);
-                $log.warn('There are problems with lat-lng data, please verify your marker model');
+                // $log.warn('There are problems with lat-lng data, please verify your marker model');
                 // _deleteMarker(marker, map, layers);
                 return;
               }
