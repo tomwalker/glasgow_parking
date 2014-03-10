@@ -1,12 +1,5 @@
 var app = app || angular.module('parking', ['parking.services', 'leaflet-directive']);
 
-// app.config(['$httpProvider', function($httpProvider) {
-
-//     $httpProvider.defaults.useXDomain = true;
-//     delete $httpProvider.defaults.headers.common['X-Requested-With'];
-    
-// }]);
-
 app.controller('parkingController',
                ['$scope', 'feed', function ($scope, feed) {
 
@@ -38,8 +31,6 @@ app.controller('parkingController',
 
             var carfeed = data['payloadPublication']['situation'];
 
-			var x = 0;
-
             for (var meter in carfeed) {
                 var name = carfeed[meter]
                     .situationRecord
@@ -47,7 +38,7 @@ app.controller('parkingController',
                     .substring(0,
                      carfeed[meter].situationRecord.carParkIdentity.indexOf(':'));
 
-				name = name.split(' ').join('-');
+                name = name.split(' ').join('-');
 
                 var latitude = carfeed[meter].situationRecord
                     .groupOfLocations.locationContainedInGroup
@@ -107,7 +98,7 @@ app.controller('parkingController',
 
 
             }
-			console.log($scope.meters);
+
             
         });                     // end of feed.get
 
@@ -158,11 +149,9 @@ app.controller('parkingController',
 
     function error() {
         $scope.current_location = false;
-    $scope.dataRetrieve();
+        $scope.dataRetrieve();
     }
 
-
     navigator.geolocation.getCurrentPosition(success, error);
-
 
 }]);
