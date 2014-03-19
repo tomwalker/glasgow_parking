@@ -143,7 +143,7 @@ app.controller('parkingController',
             lng: longitude
         };
 
-    $scope.dataRetrieve();
+        $scope.dataRetrieve();
 
     }
 

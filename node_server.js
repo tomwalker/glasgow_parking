@@ -18,16 +18,16 @@ function pull() {
     body = '';
     
     res.on('data', function(chunk) {
-	if (chunk != '{"error":"RATE_LIMIT"}'){
-	    body += chunk;
-	} else {
-	    body = previous;
-	    // console.log('using cache');
-	}
+    if (chunk != '{"error":"RATE_LIMIT"}'){
+        body += chunk;
+    } else {
+        body = previous;
+        // console.log('using cache');
+    }
     });
     
     res.on("end", function() {
-	// console.log("BODY: " + body);
+    // console.log("BODY: " + body);
     });
     
 }).on('error', function(e) {
