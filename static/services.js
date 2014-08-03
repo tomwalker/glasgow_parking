@@ -44,6 +44,8 @@ angular
     //           }
     //          ])
 
+// http://stackoverflow.com/questions/14045626/using-http-in-angular-js-factory
+
     .factory('meters',
 	     function(MapDistance, $http) {
 		 return function(location) {
