@@ -12,10 +12,8 @@ angular
 					 $scope.meters = {};
 
 					 $scope.dataRetrieve = function(location) {
-						 // var x = meters(location);
-						 // console.log(x);
-						 // $scope.meters = meters(location)
-						 meters(location).then(function(markers){
+						 console.log(meters());
+						 meters(location).success(function(markers){
 							 console.log(markers);
 						 	 $scope.meters = markers;
 						 });
@@ -53,12 +51,13 @@ angular
 							 lat: latitude,
 							 lng: longitude
 						 };
-
+						 console.log('not error');
 						 $scope.dataRetrieve($scope.current_location);
 
 					 }
 
 					 function error() {
+						 console.log('error');
 						 $scope.current_location = false;
 						 $scope.dataRetrieve(false);
 					 }
