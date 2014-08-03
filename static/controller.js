@@ -4,65 +4,64 @@ angular
 
 
 	.controller('parkingController',
-				['$scope', 'meters', 'MapDistance', function ($scope, meters, MapDistance) {
+				['$scope', 'meters', 'MapDistance', 'glasgowcenter',
+				 function ($scope, meters, MapDistance, glasgowcenter) {
 
-					$scope.meters = {};
+					 $scope.glasgowCenter = glasgowcenter;
 
-					$scope.dataRetrieve = function(location) {
-						console.log(meters(location));
-						meters(location).$promise.then(function(markers){
-							$scope.meters = markers;
-						});
+					 $scope.meters = {};
 
+					 $scope.dataRetrieve = function(location) {
+						 // var x = meters(location);
+						 // console.log(x);
+						 // $scope.meters = meters(location)
+						 meters(location).then(function(markers){
+							 console.log(markers);
+						 	 $scope.meters = markers;
+						 });
 
-					};
-
-
-					$scope.glasgowCenter = {
-						lat: 55.8588,
-						lng: -4.2479,
-						zoom: 14
-					};
+					 };
 
 
-					if (!navigator.geolocation){
-						$scope.current_location = false;
-						return;
-					}
 
-					function success(position) {
-						var car_icon = {
-							iconUrl: './car.png',
-							iconSize:     [32, 32],
-							iconAnchor:   [16, 16],
-							popupAnchor:  [0, -12]
-						};
+					 if (!navigator.geolocation){
+						 $scope.current_location = false;
+						 return;
+					 }
 
-						var latitude  = position.coords.latitude;
-						var longitude = position.coords.longitude;
+					 function success(position) {
+						 var car_icon = {
+							 iconUrl: './car.png',
+							 iconSize:     [32, 32],
+							 iconAnchor:   [16, 16],
+							 popupAnchor:  [0, -12]
+						 };
 
-						$scope.meters['current'] = {
-							lat: latitude,
-							lng: longitude,
-							message: 'You are here',
-							focus: true,
-							icon: car_icon,
-							draggable: false
-						};
+						 var latitude  = position.coords.latitude;
+						 var longitude = position.coords.longitude;
 
-						$scope.current_location = {
-							lat: latitude,
-							lng: longitude
-						};
+						 $scope.meters['current'] = {
+							 lat: latitude,
+							 lng: longitude,
+							 message: 'You are here',
+							 focus: true,
+							 icon: car_icon,
+							 draggable: false
+						 };
 
-						$scope.dataRetrieve($scope.current_location);
+						 $scope.current_location = {
+							 lat: latitude,
+							 lng: longitude
+						 };
 
-					}
+						 $scope.dataRetrieve($scope.current_location);
 
-					function error() {
-						$scope.current_location = false;
-						$scope.dataRetrieve();
-					}
-					navigator.geolocation.getCurrentPosition(success, error);
+					 }
 
-	}]);
+					 function error() {
+						 $scope.current_location = false;
+						 $scope.dataRetrieve(false);
+					 }
+					 navigator.geolocation.getCurrentPosition(success, error);
+
+				 }]);

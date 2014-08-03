@@ -8,6 +8,9 @@ function mapDistance() {
             return this * Math.PI / 180;
         };
 
+		console.log(current);
+		console.log(meter);
+
         var R = 6371;
         var dLat = (current.lat - meter.lat).toRad();
         var dLon = (current.lng - meter.lng).toRad();
@@ -22,79 +25,92 @@ function mapDistance() {
     };
 }
 
+var glasgowCenter = {
+	lat: 55.8588,
+	lng: -4.2479,
+	zoom: 14
+}
+
 angular
     .module('parking.services', ['ngResource'])
 
     .service('MapDistance', mapDistance)
 
-    .factory('apifeed', ['$resource',
-        function($resource) {
-            return $resource('http://desolate-lowlands-9828.herokuapp.com/api');
-        }
-    ])
+    .value('glasgowcenter', glasgowCenter)
 
-    .factory('meters', ['apifeed', 'MapDistance', function(apifeed, MapDistance) {
-      return function(location) {
-        return apifeed.get(function (data) {
+    .factory('apifeed',
+			 ['$resource',
+			  function($resource) {
+				  return $resource('http://desolate-lowlands-9828.herokuapp.com/api',
+								   null,
+								   {'query':  {method:'GET', isArray:false}});
+			  }
+	])
 
-          var map_markers = {};
-          var carfeed = data.payloadPublication.situation;
+    .factory('meters',
+			 ['MapDistance', '$http',
+			  function(MapDistance, $http) {
+				  return function(location) {
+					  return $http({method: 'GET', url: 'http://desolate-lowlands-9828.herokuapp.com/api'}).
+						  success(function (data, status, headers, config) {
 
-          for (var meter in carfeed) {
-            var name = carfeed[meter].situationRecord.carParkIdentity
-                         .substring(0, carfeed[meter].situationRecord.carParkIdentity.indexOf(':'));
-            var latitude = carfeed[meter].situationRecord.groupOfLocations.locationContainedInGroup
-                             .pointByCoordinates.pointCoordinates.latitude;
-            var longitude = carfeed[meter].situationRecord.groupOfLocations.locationContainedInGroup
-                              .pointByCoordinates.pointCoordinates.longitude;
+						  var map_markers = {};
+						  var carfeed = data.payloadPublication.situation;
 
-            if (carfeed[meter].situationRecord.carParkStatus === "carParkFull"){
-              var parkingMessage = '<strong>' + name + '</strong><br>Car park full';
+						  for (var meter in carfeed) {
+							  var name = carfeed[meter].situationRecord.carParkIdentity
+								  .substring(0, carfeed[meter].situationRecord.carParkIdentity.indexOf(':'));
+							  var latitude = carfeed[meter].situationRecord.groupOfLocations.locationContainedInGroup
+								  .pointByCoordinates.pointCoordinates.latitude;
+							  var longitude = carfeed[meter].situationRecord.groupOfLocations.locationContainedInGroup
+								  .pointByCoordinates.pointCoordinates.longitude;
+							  if (carfeed[meter].situationRecord.carParkStatus === "carParkFull"){
+								  var parkingMessage = '<strong>' + name + '</strong><br>Car park full';
 
-              var full_icon = {
-                iconUrl: './error.png',
-                iconSize:     [32, 32],
-                iconAnchor:   [16, 16],
-                popupAnchor:  [0, -12]
-              };
+								  var full_icon = {
+									  iconUrl: './error.png',
+									  iconSize:     [32, 32],
+									  iconAnchor:   [16, 16],
+									  popupAnchor:  [0, -12]
+								  };
 
-              map_markers[name] = {
-                lat: latitude,
-                lng: longitude,
-                message: parkingMessage,
-                focus: false,
-                icon: full_icon,
-                draggable: false
-              };
+								  map_markers[name] = {
+									  lat: latitude,
+									  lng: longitude,
+									  message: parkingMessage,
+									  focus: false,
+									  icon: full_icon,
+									  draggable: false
+								  };
 
-            } else {
+							 } else {
+								  var parkingMessage = '<strong>' + name + '</strong><br>Free spaces: ' +
+									  (carfeed[meter].situationRecord.totalCapacity -
+									   carfeed[meter].situationRecord.occupiedSpaces);
 
-              var parkingMessage = '<strong>' + name + '</strong><br>Free spaces: ' +
-                                   (carfeed[meter].situationRecord.totalCapacity -
-                                    carfeed[meter].situationRecord.occupiedSpaces);
+								  if (location !== false){
+									  console.log(location);
+									  var distance = MapDistance.calculate(location, {lat: latitude, lng: longitude});
 
-              if (location !== false){
-                var distance = MapDistance.calculate(location, {lat: latitude, lng: longitude});
+									  if (distance < 1){
+										  parkingMessage = parkingMessage.concat('<br> Distance: ' +
+																				 distance * 1000 + 'm');
+									  } else {
+										  parkingMessage = parkingMessage.concat('<br> Distance: ' +
+																				 distance + 'km');
+									  }
+								  }
 
-                if (distance < 1){
-                  parkingMessage = parkingMessage.concat('<br> Distance: ' +
-                                                           distance * 1000 + 'm');
-                } else {
-                  parkingMessage = parkingMessage.concat('<br> Distance: ' +
-                                                         distance + 'km');
-                }
-              }
-
-              map_markers[name] = {
-                lat: latitude,
-                lng: longitude,
-                message: parkingMessage,
-                focus: false,
-                draggable: false
-              };
-            }
-          }
-        return map_markers;
-        });
-      };
-    }]);
+								  map_markers[name] = {
+									  lat: latitude,
+									  lng: longitude,
+									  message: parkingMessage,
+									  focus: false,
+									  draggable: false
+								  };
+							  }
+						  }
+						  return map_markers;
+					  });
+				  };
+			  }]);
