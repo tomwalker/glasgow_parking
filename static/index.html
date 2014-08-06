@@ -22,7 +22,6 @@
 
     <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.css" />
 
-    <script src="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.js"></script>
 
 
   </head>
@@ -30,17 +29,17 @@
 
   <body ng-app='parking'>
 
-    <div ng-controller='parkingController'>
+    <div ng-controller='parkingController' ng-show="meters">
 
       <leaflet markers="meters" width="100%" height="1080px"
-		 center="glasgowCenter" watchMarkers=false>
+		 center="glasgowCenter" watchMarkers="true">
       </leaflet>
 
 
     </div> <!-- end parking controller -->
 
-    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.13/angular.js"></script>
-    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.13/angular-resource.js"></script>
+    <script src="http://cdn.leafletjs.com/leaflet-0.7.1/leaflet.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.20/angular.js"></script>
     <script src="./services.js"></script>
     <script src="./controller.js"></script>
     <script src="./angular-leaflet-directive.js"></script>
