@@ -5,51 +5,33 @@
     <title>Live Glasgow Council Parking Spaces</title>
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge"> <!-- for ie compatibility -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-    <!-- Bootstrap -->
-    <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.css">
-
-    <!-- Optional theme -->
     <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap-theme.min.css">
-
-    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-	<script src="http://netdna.bootstrapcdn.com/html5shiv/3.6.1/html5shiv.js"></script>
-	<link href="http:http://netdna.bootstrapcdn.com/respond-proxy.html" id="respond-proxy" rel="respond-proxy" />
-	<![endif]-->
-
     <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.css" />
-
-
 
   </head>
 
+  <body ng-app='parking' >
 
-  <body ng-app='parking'>
+    <div ng-controller='parkingController' ng-switch="meters">
 
-    <div ng-controller='parkingController' ng-show="meters">
-
-      <leaflet markers="meters" width="100%" height="1080px"
-		 center="glasgowCenter" watchMarkers="true">
+      <leaflet markers="meters" center="glasgowCenter"
+               width="100%" height="1080px">
       </leaflet>
 
 
     </div> <!-- end parking controller -->
 
     <script src="http://cdn.leafletjs.com/leaflet-0.7.1/leaflet.js"></script>
-    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.20/angular.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-beta.17/angular.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.2/js/bootstrap.min.js"></script>
+
     <script src="./services.js"></script>
     <script src="./controller.js"></script>
     <script src="./angular-leaflet-directive.js"></script>
-
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-
-
-    <!-- Bootstrap from CDN  -->
-    <script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.2/js/bootstrap.min.js"></script>
-
 
   </body>
 </html>

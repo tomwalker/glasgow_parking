@@ -1,49 +1,53 @@
 'use strict';
 
+var mapDistance = function() {
+    // taken from http://www.movable-type.co.uk/scripts/latlong.html
+    return {
+        calculate: function (current, meter) {
+            Number.prototype.toRad = function() {
+                return this * Math.PI / 180;
+            };
+            var R = 6371;
+            var dLat = (current.lat - meter.lat).toRad();
+            var dLon = (current.lng - meter.lng).toRad();
+            var lat1 = Number(meter.lat).toRad();
+            var lat2 = Number(current.lat).toRad();
+            var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1) * Math.cos(lat2);
+            var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            var d = R * c;
+            return d.toFixed(3);
+        }
+    };
+};
+
 
 
 function process(){
   return{
     feed: function (carfeed, location) {
 
-        var mapDistance = function() {
-            // taken from http://www.movable-type.co.uk/scripts/latlong.html
-            return {
-                calculate: function (current, meter) {
-                    Number.prototype.toRad = function() {
-                        return this * Math.PI / 180;
-                    };
-                    var R = 6371;
-                    var dLat = (current.lat - meter.lat).toRad();
-                    var dLon = (current.lng - meter.lng).toRad();
-                    var lat1 = Number(meter.lat).toRad();
-                    var lat2 = Number(current.lat).toRad();
-                    var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                        Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1) * Math.cos(lat2);
-                    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-                    var d = R * c;
-                    return d.toFixed(3);
-                }
-            };
-        };
-
         var map_markers = {};
 
         for (var meter in carfeed) {
+
             var name = carfeed[meter].situationRecord.carParkIdentity
                 .substring(0, carfeed[meter].situationRecord.carParkIdentity.indexOf(':'))
-                .split(' ').join('_');
+                .split(' ').join('_'),
 
-            var latitude = carfeed[meter].situationRecord.groupOfLocations.locationContainedInGroup
-                .pointByCoordinates.pointCoordinates.latitude;
+            latitude = carfeed[meter].situationRecord.groupOfLocations.locationContainedInGroup
+                .pointByCoordinates.pointCoordinates.latitude,
 
-            var longitude = carfeed[meter].situationRecord.groupOfLocations.locationContainedInGroup
-                .pointByCoordinates.pointCoordinates.longitude;
+            longitude = carfeed[meter].situationRecord.groupOfLocations.locationContainedInGroup
+                .pointByCoordinates.pointCoordinates.longitude,
+
+            full_icon,
+            parkingMessage;
 
             if (carfeed[meter].situationRecord.carParkStatus === "carParkFull"){
-                var parkingMessage = '<strong>' + name + '</strong><br>Car park full';
+                parkingMessage = '<strong>' + name + '</strong><br>Car park full';
 
-                var full_icon = {
+                full_icon = {
                     iconUrl: './error.png',
                     iconSize:     [32, 32],
                     iconAnchor:   [16, 16],
@@ -51,33 +55,32 @@ function process(){
                 };
 
             } else {
-                var parkingMessage = '<strong>' + name + '</strong><br>Free spaces: ' +
+                parkingMessage = '<strong>' + name + '</strong><br>Free spaces: ' +
                     (carfeed[meter].situationRecord.totalCapacity -
                      carfeed[meter].situationRecord.occupiedSpaces);
 
                 if (location !== false){
-                    console.log('location is not false');
-                    // var distance = mapDistance.calculate(location, {lat: latitude, lng: longitude});
+                    var distance = mapDistance().calculate(location, {lat: latitude, lng: longitude});
 
-                    // if (distance < 1){
-                    //     parkingMessage = parkingMessage.concat('<br> Distance: ' +
-                    //                                            distance * 1000 + 'm');
-                    // } else {
-                    //     parkingMessage = parkingMessage.concat('<br> Distance: ' +
-                    //                                            distance + 'km');
-                    // }
+                    if (distance < 1){
+                        parkingMessage = parkingMessage.concat('<br> Distance: ' +
+                                                               distance * 1000 + 'm');
+                    } else {
+                        parkingMessage = parkingMessage.concat('<br> Distance: ' +
+                                                               distance + 'km');
+                    }
                 }
 
 
             }
 
             map_markers[name] = {
-                    lat: +latitude,
-                    lng: +longitude,
-                    message: parkingMessage,
-                    focus: false,
-                    icon: full_icon || '',
-                    draggable: false
+                lat: +latitude,
+                lng: +longitude,
+                message: parkingMessage,
+                focus: false,
+                icon: full_icon || '',
+                draggable: false
             };
         } // end carfeed for loop
 
@@ -92,37 +95,80 @@ var glasgowCenter = {
     zoom: 14
 };
 
+
+function geolocate() {
+
+    var output;
+
+    function success(position) {
+        var car_icon = {
+            iconUrl: './car.png',
+            iconSize:     [32, 32],
+            iconAnchor:   [16, 16],
+            popupAnchor:  [0, -12]
+        };
+
+        var latitude  = position.coords.latitude;
+        var longitude = position.coords.longitude;
+
+        output = {
+            lat: latitude,
+            lng: longitude,
+            message: 'You are here',
+            focus: true,
+            icon: car_icon,
+            draggable: false
+        };
+
+    }
+
+    function error() {
+        output = {};
+    }
+
+    var process = function(){
+        if (!navigator.geolocation){
+            error();
+        } else {
+            navigator.geolocation.getCurrentPosition(success, error);
+        }
+        return output;
+    };
+
+    process();
+
+    return{
+        me: process
+    };
+
+}
+
 angular
   .module('parking.services', [])
   .service('process', process)
   .value('glasgowcenter', glasgowCenter)
-
-  .factory('meters', ['$http', 'process', function($http, process) {
+  .factory('geolocate', geolocate)
+  .factory('meters', ['$http', 'process', 'geolocate', function($http, process, geolocate) {
 
       var map_markers = {};
-
-      var markers = function (location) {
-          location = typeof location !== 'undefined' ? location : false;
+      var markers = function () {
           return $http.get('http://desolate-lowlands-9828.herokuapp.com/api')
               .success(function (data) {
                   var carfeed = data['payloadPublication']['situation'];
-                  var output = process.feed(carfeed, location);
-                  map_markers = output;
+                  map_markers['current'] = geolocate.me();
+                  var current_location = {
+                      lat: map_markers['current']['lat'],
+                      lng: map_markers['current']['lng']
+                  };
+                  map_markers = process.feed(carfeed, current_location);
               });
       };
 
       markers();
 
-      var provide = function(){
-          console.log(map_markers);
-          return map_markers;
-      };
-
       return {
-
           update: markers,
-          get: provide
-
+          get: function() {return map_markers;}
       };
 
   }]);
