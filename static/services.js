@@ -60,7 +60,8 @@ function process(){
                      carfeed[meter].situationRecord.occupiedSpaces);
 
                 if (location !== false){
-                    var distance = mapDistance().calculate(location, {lat: latitude, lng: longitude});
+                    var distance = mapDistance().calculate(location,
+														   {lat: latitude, lng: longitude});
 
                     if (distance < 1){
                         parkingMessage = parkingMessage.concat('<br> Distance: ' +
