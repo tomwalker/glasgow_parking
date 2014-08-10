@@ -5,6 +5,18 @@
 describe('service', function() {
 	beforeEach(module('parking.services'));
 
+	beforeEach(inject(function(_$httpBackend_, meters){
+		$m = meters;
+		mockBackend = _$httpBackend_;
+
+		this.addMatchers({
+			toEqualData: function(expect) {
+				return angular.equals(expect, this.actual);
+			}
+		});
+
+	}));
+
 
 	describe('glasgowcenter', function() {
 		it('should return glasgow centre coordinates', inject(function(glasgowcenter) {
@@ -43,17 +55,12 @@ describe('service', function() {
 		}));
 	});
 
-	describe('process', function() {
-		it('should return map markers without distance when location is false', inject(function(process) {
+	// describe('process', function() {
+	// 	it('should return map markers without distance when location is false', inject(function(process) {
 
 
-			expect(glasgowcenter).toEqual({
-				lat: 55.8588,
-				lng: -4.2479,
-				zoom: 14});
-
-		}));
-	});
+	// 	}));
+	// });
 
 
 });

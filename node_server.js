@@ -13,23 +13,23 @@ var options = {
 
 function pull() {
     http.get(options, function(res) {
-    // console.log('started pull');
+    console.log('started pull');
     var previous = body;
     body = '';
-    
+
     res.on('data', function(chunk) {
     if (chunk != '{"error":"RATE_LIMIT"}'){
         body += chunk;
     } else {
         body = previous;
-        // console.log('using cache');
+        console.log('using cache');
     }
     });
-    
+
     res.on("end", function() {
-    // console.log("BODY: " + body);
+    console.log("BODY: " + body);
     });
-    
+
 }).on('error', function(e) {
     console.log("Got error: " + e.message);
 });
