@@ -48,7 +48,7 @@ function process(){
                 parkingMessage = '<strong>' + name + '</strong><br>Car park full';
 
                 full_icon = {
-                    iconUrl: './error.png',
+                    iconUrl: '../img/error.png',
                     iconSize:     [32, 32],
                     iconAnchor:   [16, 16],
                     popupAnchor:  [0, -12]
@@ -103,7 +103,7 @@ function geolocate() {
 
     function success(position) {
         var car_icon = {
-            iconUrl: './car.png',
+            iconUrl: '../img/car.png',
             iconSize:     [32, 32],
             iconAnchor:   [16, 16],
             popupAnchor:  [0, -12]

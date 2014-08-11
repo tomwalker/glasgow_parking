@@ -1,4 +1,5 @@
 'use strict';
+
 angular
   .module('parking', ['parking.services', 'leaflet-directive'])
 
