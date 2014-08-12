@@ -8,7 +8,8 @@ module.exports = function(config){
       'bower_components/angular-route/angular-route.js',
       'bower_components/angular-mocks/angular-mocks.js',
       'app/js/*.js',
-      'test/unit/*.js'
+      'test/unit/*.js',
+      {pattern: 'test/mocks/*.json',}
     ],
 
     autoWatch : true,
@@ -23,6 +24,8 @@ module.exports = function(config){
             'karma-jasmine',
             'karma-junit-reporter'
             ],
+
+
 
     junitReporter : {
       outputFile: 'test_out/unit.xml',

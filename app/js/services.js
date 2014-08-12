@@ -48,7 +48,7 @@ function process(){
                 parkingMessage = '<strong>' + name + '</strong><br>Car park full';
 
                 full_icon = {
-                    iconUrl: '../img/error.png',
+                    iconUrl: './img/error.png',
                     iconSize:     [32, 32],
                     iconAnchor:   [16, 16],
                     popupAnchor:  [0, -12]
@@ -103,7 +103,7 @@ function geolocate() {
 
     function success(position) {
         var car_icon = {
-            iconUrl: '../img/car.png',
+            iconUrl: './img/car.png',
             iconSize:     [32, 32],
             iconAnchor:   [16, 16],
             popupAnchor:  [0, -12]
@@ -151,17 +151,19 @@ angular
   .factory('geolocate', geolocate)
   .factory('meters', ['$http', 'process', 'geolocate', function($http, process, geolocate) {
 
-      var map_markers = {};
+      var map_markers = {},
+          current_marker = {};
       var markers = function () {
           return $http.get('http://desolate-lowlands-9828.herokuapp.com/api')
               .success(function (data) {
                   var carfeed = data['payloadPublication']['situation'];
-                  map_markers['current'] = geolocate.me();
+                  var current_marker = geolocate.me();
                   var current_location = {
-                      lat: map_markers['current']['lat'],
-                      lng: map_markers['current']['lng']
+                      lat: current_marker['lat'],
+                      lng: current_marker['lng']
                   };
-                  map_markers = process.feed(carfeed, current_location);
+                  map_markers = process.feed(carfeed, current_location)
+                  map_markers['current'] = current_marker;
               });
       };
 
