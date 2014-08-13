@@ -1,44 +1,69 @@
 'use strict';
 
-/* jasmine specs for controllers go here */
-
 describe('controllers', function(){
     beforeEach(module('parking.controllers'));
 
-    var scope, controller, $scope = {};
-
-    beforeEach(inject(function($controller, $rootScope, $q) {
-        var meters = {
-            update: function () {
-                var def = $q.defer();
-                return def.promise;
-            },
-            get: function() {
-                return 'meter data';
-            }
-        };
-        spyOn(meters, 'update').andCallThrough();
-        scope = $rootScope.$new();
-        controller = $controller('parkingController', {
-            $scope: scope,
-            meters: meters
-        });
-    }));
-
-
-
+    var $scope = {};
 
     it('should have access to glasgow coordinates', inject(function($controller) {
         var myCtrl1 = $controller('parkingController', { $scope: $scope, });
-        console.log($scope.meters);
 
         expect(myCtrl1).toBeDefined();
         expect($scope.glasgowCenter.lat).toEqual(55.8588);
     }));
 
-    // it('should ....', inject(function($controller) {
-    //   //spec body
-    //   var myCtrl2 = $controller('MyCtrl2', { $scope: {} });
-    //   expect(myCtrl2).toBeDefined();
-    // }));
+});
+
+describe('controller calling meters service', function() {
+    var scope;
+    var meterService;
+    var controller;
+    var q;
+    var deferred;
+
+    beforeEach(module('parking.controllers'));
+
+    // define the mock
+    beforeEach(function() {
+        meterService = {
+            get: function(){
+                return 'hi';
+            },
+
+            update: function() {
+                deferred = q.defer();
+                return deferred.promise;
+            }
+        };
+    });
+
+    // inject the required services and instantiate the controller
+    beforeEach(inject(function($rootScope, $controller, $q) {
+        scope = $rootScope.$new();
+        q = $q;
+        controller = $controller('parkingController', { $scope:scope, meters: meterService });
+    }));
+
+    it('should call meters.update when the controller is activated', function() {
+        spyOn(meterService, 'update').andCallThrough();
+
+        controller.dataRetrieve();
+
+        deferred.resolve();
+
+        scope.$root.$digest();
+
+        expect(meterService.update).toHaveBeenCalled();
+
+    });
+
+    it('should set scope.meters after meter service has been updated', function() {
+        controller.dataRetrieve();
+
+        deferred.resolve();
+
+        scope.$root.$digest();
+
+        expect(scope.meters).not.toBe({});
+    });
 });
