@@ -1,7 +1,6 @@
 'use strict';
 
 angular
-
   .module('parking.controllers', ['parking.services', 'leaflet-directive'])
 
   .controller('parkingController',['$scope', 'meters', 'glasgowcenter',
