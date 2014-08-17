@@ -163,7 +163,6 @@ angular
                       lng: current_marker['lng']
                   };
                   map_markers = process.feed(carfeed, current_location)
-                  console.log(current_location);
                   switch (true){
                       case current_location['lat'] > 55.875 || current_location['lat'] < 55.835:
                         break;
