@@ -163,7 +163,15 @@ angular
                       lng: current_marker['lng']
                   };
                   map_markers = process.feed(carfeed, current_location)
-                  map_markers['current'] = current_marker;
+                  console.log(current_location);
+                  switch (true){
+                      case current_location['lat'] > 55.875 || current_location['lat'] < 55.835:
+                        break;
+                      case current_location['lng'] > -4.21 || current_location['lng'] < -4.3:
+                        break;
+                      default:
+                        map_markers['current'] = current_marker;
+                  }
               });
       };
 

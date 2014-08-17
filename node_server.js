@@ -41,7 +41,7 @@ app.use(function(req, res, next) {
   next();
 });
 
-app.use(express.static(__dirname + '/static'));
+app.use(express.static(__dirname + '/app'));
 
 app.get('/api', function (req, res) {
     pull();

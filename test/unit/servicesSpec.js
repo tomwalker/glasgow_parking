@@ -13,7 +13,7 @@ describe('service', function() {
         var jasmineError = jasmine.createSpy();
 
 		spyOn(navigator.geolocation,"getCurrentPosition").andCallFake(function() {
-            var position = { coords: { latitude: 55.1234, longitude: -4.4321 } };
+            var position = { coords: { latitude: 55.8588, longitude: -4.2479 } };
             arguments[0](position);
         });
 
@@ -75,8 +75,8 @@ describe('service', function() {
 		it('should return false when cannot use browser coordinates', inject(function(geolocate) {
 
 			var expected_output = {
-				lat: 55.1234,
-				lng: -4.4321,
+				lat: 55.8588,
+				lng: -4.2479,
 				message: 'You are here',
 				focus: true,
 				icon: {
@@ -109,7 +109,30 @@ describe('service', function() {
                 output = meters.get();
             });
             $httpBackend.flush();
-            expect(output.current.lat).toEqual(55.1234);
+
+            expect(output.current.lat).toBeDefined();
+            expect(output.SECC.message).toContain('Distance');
+            expect(output.Zoo.message).toNotContain('Distance');
+		}));
+	});
+
+	describe('meters', function() {
+		it('should not show current location when outside Glasgow', inject(function(meters) {
+            // stop the previous spy to change coordinates
+            navigator.geolocation.getCurrentPosition.isSpy = false;
+		    spyOn(navigator.geolocation,"getCurrentPosition").andCallFake(function() {
+                var position = { coords: { latitude: 55.9, longitude: -4.420 } };
+                arguments[0](position);
+            });
+
+            var output;
+            meters.update().then(function(data){
+                output = meters.get();
+            });
+
+            $httpBackend.flush();
+
+            expect(output.current).toBeUndefined();
             expect(output.SECC.message).toContain('Distance');
             expect(output.Zoo.message).toNotContain('Distance');
 		}));
